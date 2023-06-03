@@ -253,9 +253,9 @@ class DownloadManager {
 
   Future<void> addBatchDownloadsWithFileNames(
       Map<String, String> urlsAndFilenames, String savedDir) async {
-    urls.forEach((url) {
+    for (var url in urlsAndFilenames.keys) {
       addDownload(url, savedDir, filename: urlsAndFilenames[url]!);
-    });
+    }
   }
 
   List<DownloadTask?> getBatchDownloads(List<String> urls) {
