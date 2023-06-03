@@ -31,7 +31,7 @@ class DownloadManager {
   }
 
   void Function(int, int) createCallback(url, int partialFileLength) =>
-      (int received, int total) {
+          (int received, int total) {
         getDownload(url)?.progress.value =
             (received + partialFileLength) / (total + partialFileLength);
 
@@ -145,24 +145,27 @@ class DownloadManager {
     }
   }
 
-  Future<DownloadTask?> addDownload(String url, String savedDir) async {
+  Future<DownloadTask?> addDownload(String url, String savedDir,
+      {String filename}) async {
     if (url.isNotEmpty) {
       if (savedDir.isEmpty) {
         savedDir = ".";
       }
-
-      var isDirectory = await Directory(savedDir).exists();
-      var downloadFilename = isDirectory
-          ? savedDir + Platform.pathSeparator + getFileNameFromUrl(url)
-          : savedDir;
-
+      late String downloadFilename;
+      if (filename == null) {
+        var isDirectory = await Directory(savedDir).exists();
+        downloadFilename = isDirectory
+            ? savedDir + Platform.pathSeparator + getFileNameFromUrl(url)
+            : savedDir;
+      } else {
+        downloadFilename = filename;
+      }
       return _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
   }
 
   Future<DownloadTask> _addDownloadRequest(
-    DownloadRequest downloadRequest,
-  ) async {
+      DownloadRequest downloadRequest,) async {
     if (_cache[downloadRequest.url] != null) {
       if (!_cache[downloadRequest.url]!.status.value.isCompleted &&
           _cache[downloadRequest.url]!.request == downloadRequest) {
@@ -245,6 +248,13 @@ class DownloadManager {
   Future<void> addBatchDownloads(List<String> urls, String savedDir) async {
     urls.forEach((url) {
       addDownload(url, savedDir);
+    });
+  }
+
+  Future<void> addBatchDownloadsWithFileNames(
+      Map<String, String> urlsAndFilenames, String savedDir) async {
+    urls.forEach((url) {
+      addDownload(url, savedDir, filename: urlsAndFilenames[url]!);
     });
   }
 
@@ -387,6 +397,8 @@ class DownloadManager {
 
   /// This function is used for get file name with extension from url
   String getFileNameFromUrl(String url) {
-    return url.split('/').last;
+    return url
+        .split('/')
+        .last;
   }
 }
