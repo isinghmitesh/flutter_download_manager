@@ -146,7 +146,7 @@ class DownloadManager {
   }
 
   Future<DownloadTask?> addDownload(String url, String savedDir,
-      {String filename}) async {
+      {String? filename}) async {
     if (url.isNotEmpty) {
       if (savedDir.isEmpty) {
         savedDir = ".";
