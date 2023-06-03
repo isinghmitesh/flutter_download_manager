@@ -158,7 +158,7 @@ class DownloadManager {
             ? savedDir + Platform.pathSeparator + getFileNameFromUrl(url)
             : savedDir;
       } else {
-        downloadFilename = saveDir + Platform.pathSeparator + filename;
+        downloadFilename = savedDir + Platform.pathSeparator + filename;
       }
       return _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
